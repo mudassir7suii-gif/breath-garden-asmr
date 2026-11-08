@@ -1,0 +1,443 @@
+/* Breath Garden - Calming Visual Styling */
+
+:root {
+  --bg-deep: #0D1117;
+  --bg-twilight: #161B26;
+  --bg-warm-dusk: #231E2A;
+  --text-primary: #F0F3F6;
+  --text-muted: #8C96A5;
+  --accent-gold: #E5C07B;
+  --accent-glow: rgba(229, 192, 123, 0.25);
+  --ring-color: rgba(200, 225, 235, 0.35);
+  --ring-active: rgba(255, 245, 220, 0.7);
+  --font-main: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  --font-serif: "Georgia", "Cambria", "Times New Roman", serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+  background-color: #07090D;
+  font-family: var(--font-main);
+  color: var(--text-primary);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* App Viewport Container: Mobile-first portrait, centered gracefully on desktop */
+.app-container {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  height: 100%;
+  max-height: 920px;
+  background: linear-gradient(180deg, #0A0D14 0%, #141926 45%, #241D2A 85%, #18151D 100%);
+  overflow: hidden;
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.7);
+  display: flex;
+  flex-direction: column;
+}
+
+@media (min-width: 480px) {
+  .app-container {
+    border-radius: 36px;
+    height: 92vh;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+}
+
+/* Canvas Layer */
+#garden-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Header & Controls */
+.top-nav {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 20px 10px;
+}
+
+.brand-title {
+  font-family: var(--font-serif);
+  font-size: 1.15rem;
+  letter-spacing: 0.12em;
+  font-weight: 300;
+  color: rgba(240, 243, 246, 0.75);
+  text-transform: uppercase;
+}
+
+.icon-btn {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+  border-radius: 50%;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.icon-btn:hover, .icon-btn:active {
+  background: rgba(255, 255, 255, 0.15);
+  transform: scale(1.05);
+}
+
+/* Main Breath Interactive Zone */
+.breath-touch-zone {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  padding-bottom: 70px;
+  touch-action: none;
+  cursor: pointer;
+}
+
+.breath-center-indicator {
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  pointer-events: none;
+}
+
+.breath-ring {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  border: 1.5px solid var(--ring-color);
+  box-shadow: 0 0 25px var(--accent-glow);
+  opacity: 0.35;
+  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.3s ease, border-color 0.4s ease;
+}
+
+.breath-ring.inhale-active {
+  border-color: rgba(255, 235, 180, 0.75);
+  box-shadow: 0 0 45px rgba(255, 235, 180, 0.45);
+}
+
+.breath-ring.exhale-active {
+  border-color: rgba(180, 225, 255, 0.75);
+  box-shadow: 0 0 35px rgba(180, 225, 255, 0.35);
+}
+
+.breath-prompt {
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  font-weight: 300;
+  letter-spacing: 0.08em;
+  color: var(--text-primary);
+  opacity: 0.85;
+  transition: all 0.5s ease;
+  pointer-events: none;
+  text-align: center;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);
+}
+
+.breath-prompt.inhaling {
+  color: #FFEFC2;
+  transform: translateY(-4px);
+}
+
+.breath-prompt.exhaling {
+  color: #D2EEFF;
+  transform: translateY(2px);
+}
+
+/* Seed Selection Screen */
+.overlay-screen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 30px 24px;
+  background: rgba(10, 13, 20, 0.82);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  transition: opacity 0.4s ease, visibility 0.4s;
+}
+
+.screen-title {
+  font-family: var(--font-serif);
+  font-size: 1.6rem;
+  font-weight: 300;
+  margin-bottom: 8px;
+  letter-spacing: 0.05em;
+  color: #F8F9FA;
+  text-align: center;
+}
+
+.screen-subtitle {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-bottom: 36px;
+  text-align: center;
+  line-height: 1.4;
+  font-weight: 300;
+}
+
+.seed-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  max-width: 320px;
+}
+
+.seed-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 18px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.seed-card:hover, .seed-card:active {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(229, 192, 123, 0.4);
+  transform: translateY(-2px);
+}
+
+.seed-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.3rem;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.seed-info h3 {
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+  font-weight: 400;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.seed-info p {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  line-height: 1.3;
+}
+
+/* Resting & Garden End Session */
+.action-buttons-group {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+  max-width: 280px;
+  margin-top: 24px;
+}
+
+.btn-primary {
+  padding: 14px 24px;
+  background: #E5C07B;
+  color: #1A1A1A;
+  border: none;
+  border-radius: 28px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 18px rgba(229, 192, 123, 0.25);
+}
+
+.btn-primary:active {
+  transform: scale(0.97);
+}
+
+.btn-secondary {
+  padding: 13px 24px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-primary);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 28px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* Garden Plants List */
+.garden-plants-list {
+  width: 100%;
+  max-width: 340px;
+  max-height: 380px;
+  overflow-y: auto;
+  margin: 16px 0 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-right: 4px;
+}
+
+.garden-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 14px;
+}
+
+.garden-item-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.garden-item-title {
+  font-family: var(--font-serif);
+  font-size: 0.95rem;
+  color: var(--text-primary);
+}
+
+.garden-item-date {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.empty-garden-note {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  padding: 30px 20px;
+  line-height: 1.5;
+}
+
+/* Settings Modal & Controls */
+.modal-content {
+  width: 100%;
+  max-width: 340px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.setting-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.setting-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.88rem;
+  color: var(--text-primary);
+}
+
+.setting-value {
+  color: var(--accent-gold);
+  font-weight: 500;
+}
+
+input[type="range"] {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.12);
+  outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #E5C07B;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(229, 192, 123, 0.5);
+}
+
+/* Ethical Safeguard Link */
+.helpline-box {
+  margin-top: 10px;
+  padding: 14px 16px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 12px;
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.helpline-link {
+  color: #A5C0EE;
+  text-decoration: none;
+  font-size: 0.82rem;
+  letter-spacing: 0.02em;
+  display: inline-block;
+  transition: opacity 0.2s;
+}
+
+.helpline-link:hover {
+  text-decoration: underline;
+  opacity: 0.9;
+}
+
+.dizziness-note {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+  text-align: center;
+  margin-top: 6px;
+}
+
+.hidden {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}

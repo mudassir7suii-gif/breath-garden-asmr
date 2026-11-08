@@ -1,0 +1,18 @@
+{
+  "name": "Breath Garden • ASMR Botanical Sanctuary",
+  "short_name": "BreathGarden",
+  "description": "Tactile ASMR botanical relaxation game with zero failure states and adaptive breathing.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#07090D",
+  "theme_color": "#07090D",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

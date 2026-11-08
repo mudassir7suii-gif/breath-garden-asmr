@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Breath Garden — Calming ASMR Plant Ritual</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Background Canvas for Plant Simulation & Twilight Fireflies -->
+    <canvas id="garden-canvas"></canvas>
+
+    <!-- Top Navigation -->
+    <header class="top-nav">
+      <span class="brand-title">Breath Garden</span>
+      <div style="display:flex; gap:10px;">
+        <button id="btn-settings" class="icon-btn no-breath-zone" aria-label="Settings & Audio">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Interactive Breathing Zone -->
+    <main id="breath-touch-zone" class="breath-touch-zone hidden">
+      <div class="breath-center-indicator">
+        <div id="breath-ring" class="breath-ring"></div>
+      </div>
+      <div id="breath-prompt" class="breath-prompt">Touch and hold to breathe in</div>
+    </main>
+
+    <!-- Seed Selection Screen -->
+    <section id="seed-selector" class="overlay-screen">
+      <h1 class="screen-title">Choose a Seed</h1>
+      <p class="screen-subtitle">Breathe slowly and watch life unfurl.<br>No hurry, no goals.</p>
+      
+      <div class="seed-grid no-breath-zone">
+        <div class="seed-card" data-seed="moonflower">
+          <div class="seed-icon">🌙</div>
+          <div class="seed-info">
+            <h3>Moonflower</h3>
+            <p>Pale nocturnal petals with a soft bioluminescent glow.</p>
+          </div>
+        </div>
+
+        <div class="seed-card" data-seed="jasmine">
+          <div class="seed-icon">✨</div>
+          <div class="seed-info">
+            <h3>Night Jasmine</h3>
+            <p>Slender woody branches with starry fragrant florets.</p>
+          </div>
+        </div>
+
+        <div class="seed-card" data-seed="fern">
+          <div class="seed-icon">🌿</div>
+          <div class="seed-info">
+            <h3>Silver Fern</h3>
+            <p>Spiral ancient fronds holding droplets of morning dew.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Resting / Bloom Finished Screen -->
+    <section id="resting-screen" class="overlay-screen hidden">
+      <h2 class="screen-title">In Full Bloom</h2>
+      <p class="screen-subtitle">Your plant rests peacefully in the soil.<br>Take this quiet moment for yourself.</p>
+
+      <div class="action-buttons-group no-breath-zone">
+        <button id="btn-rest" class="btn-primary">Rest Here</button>
+        <button id="btn-view-garden" class="btn-secondary">View Sanctuary Garden</button>
+        <button id="btn-another-plant" class="btn-secondary">Nurture Another Seed</button>
+      </div>
+    </section>
+
+    <!-- Garden Overview Screen -->
+    <section id="garden-overview" class="overlay-screen hidden">
+      <h2 class="screen-title">Sanctuary Garden</h2>
+      <p class="screen-subtitle">All the quiet breaths you have taken.</p>
+
+      <div id="garden-plants-list" class="garden-plants-list no-breath-zone">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <button id="btn-close-garden" class="btn-secondary no-breath-zone">Return to Garden</button>
+    </section>
+
+    <!-- Settings Modal -->
+    <section id="settings-modal" class="overlay-screen hidden">
+      <div class="modal-content no-breath-zone">
+        <h2 class="screen-title" style="font-size:1.3rem;">Gentle Pacing & Audio</h2>
+
+        <div class="setting-group">
+          <div class="setting-header">
+            <span>Inhale Pace</span>
+            <span id="pace-inhale-val" class="setting-value">4.0s</span>
+          </div>
+          <input type="range" id="pace-inhale" min="3.0" max="5.0" step="0.5" value="4.0">
+        </div>
+
+        <div class="setting-group">
+          <div class="setting-header">
+            <span>Exhale Pace</span>
+            <span id="pace-exhale-val" class="setting-value">6.0s</span>
+          </div>
+          <input type="range" id="pace-exhale" min="5.0" max="8.0" step="0.5" value="6.0">
+        </div>
+
+        <div class="setting-group" style="margin-top: 6px;">
+          <div class="setting-header">
+            <span>Breath Swell Audio</span>
+          </div>
+          <input type="range" id="vol-breath" min="0" max="1" step="0.05" value="0.9">
+        </div>
+
+        <div class="setting-group">
+          <div class="setting-header">
+            <span>Plant Growth & Dew</span>
+          </div>
+          <input type="range" id="vol-plant" min="0" max="1" step="0.05" value="0.85">
+        </div>
+
+        <div class="setting-group">
+          <div class="setting-header">
+            <span>Dusk Night Ambience</span>
+          </div>
+          <input type="range" id="vol-ambient" min="0" max="1" step="0.05" value="0.4">
+        </div>
+
+        <div class="helpline-box">
+          <a href="https://findahelpline.com" target="_blank" rel="noopener noreferrer" class="helpline-link">
+            Need to talk to someone?
+          </a>
+          <p class="dizziness-note">If you ever feel dizzy, please pause and breathe naturally.</p>
+        </div>
+
+        <button id="btn-close-settings" class="btn-primary" style="margin-top:10px;">Close</button>
+      </div>
+    </section>
+  </div>
+
+  <!-- Scripts -->
+  <script src="src/audio.js"></script>
+  <script src="src/plant.js"></script>
+  <script src="src/garden.js"></script>
+  <script src="src/breath.js"></script>
+  <script src="src/main.js"></script>
+</body>
+</html>
