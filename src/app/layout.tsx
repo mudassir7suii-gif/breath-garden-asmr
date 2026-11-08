@@ -7,7 +7,13 @@ export const metadata: Metadata = {
     'A single-mechanic, tactile ASMR plant game designed for calm, low-energy play. No timers, no scoring, no guilt.',
   manifest: '/manifest.json',
   icons: {
-    icon: '/favicon.ico',
+    icon: '/icon.svg',
+  },
+  openGraph: {
+    title: 'Breath Garden • Tactile ASMR Botanical Sanctuary',
+    description:
+      'A single-mechanic, tactile ASMR plant game designed for calm, low-energy play. No timers, no scoring, no guilt.',
+    type: 'website',
   },
 };
 
